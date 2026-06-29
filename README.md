@@ -1,48 +1,66 @@
-# Web AVG App - Enterprise Architecture
+# Marketplace de Tecnología — Proyecto Final
 
-## Visión general
-Este repositorio implementa una solución full-stack con:
-- Backend API en Node.js / TypeScript
-- Frontend Django en Python
-- Base de datos MySQL
-- Orquestación completa con Docker Compose
+**Asignatura:** Desarrollo de Aplicaciones Web  
+**Universidad de Panamá**  
+**Modalidad:** Trabajo en equipo — 3 integrantes  
+**Temática:** A — Tienda en Línea (Marketplace de Tecnología)
 
-## Arquitectura principal
-- `api/`: servicio backend con dominio, casos de uso, infraestructura y presentación separados.
-- `web/`: aplicación Django con servicio HTTP que consume la API.
-- `docker-compose.yml`: orquesta servicios `db`, `api` y `web`.
-- `run.sh`: script de arranque completo para Docker.
+---
 
-## Entregables
-1. API REST funcional: `GET /api/catalogo`.
-2. Base de datos MySQL con datos iniciales y arranque automático.
-3. Frontend Django que consume la API y renderiza el catálogo.
-4. Orquestación con Docker Compose y script de arranque `run.sh`.
-5. Documentación técnica clara en `README.md` y `docs/entregables.md`.
+## Equipo
 
-## Ejecutar la solución
+| Integrante | Usuario GitHub | Área |
+|---|---|---|
+| Victor Perez | rxppxc | Domain + Use Cases + SQL |
+| Juan Pineda | - | API REST (Infrastructure + Presentation) |
+| Jhony Zarco | jotta | Django Frontend completo |
+
+---
+
+## Descripción
+
+Sistema de marketplace para emprendimientos tecnológicos donde los usuarios pueden publicar productos tech organizados por categorías, gestionar inventario y registrar pedidos.
+
+---
+
+## Stack Tecnológico
+
+| Capa | Tecnología |
+|---|---|
+| API | Node.js + TypeScript |
+| Arquitectura | Clean Architecture |
+| Frontend | Django + HTML Templates |
+| Base de datos | MySQL |
+| Orquestación | Docker Compose |
+
+---
+
+## Entidades
+
+- `Categoría` — Clasificación de productos
+- `Producto` — Artículos tech publicados
+- `Pedido` — Registro de compras
+- `ItemPedido` — Detalle de productos por pedido
+
+---
+
+## Levantar el proyecto
 
 ```bash
-chmod +x run.sh
-./run.sh
+docker-compose up --build
 ```
 
-Luego accede a:
-- `http://localhost:3000`: API REST
-- `http://localhost:8000`: aplicación web
+API disponible en: `http://localhost:3000`  
+Frontend disponible en: `http://localhost:8000`
 
-## Inicializar la base de datos
+---
 
-El script `api/db/init.sql` se monta en `docker-compose.yml` y se ejecuta automáticamente en el primer arranque de MySQL.
+## Ramas
 
-## Archivos clave
-- `api/src/app.ts`: configuración del servidor Express.
-- `api/src/infra/database/mysqlConnection.ts`: conexión MySQL con reintentos.
-- `web/core/views.py`: vista Django que consume la API.
-- `web/core/templates/index.html`: plantilla HTML del catálogo.
-- `docs/entregables.md`: descripción de los 5 entregables.
-
-## Notas de implementación
-- El backend se despliega en `http://api:3000` dentro de Docker.
-- El frontend usa `API_BASE_URL` desde las variables de entorno.
-- La aplicación es modular: backend, frontend y base de datos están desacoplados.
+| Rama | Propósito |
+|---|---|
+| `main` | Producción — solo merge por PR aprobado |
+| `develop` | Integración del equipo |
+| `feature/001-domain-entities-sql` | Victor — Domain + SQL |
+| `feature/002-api-infra-presentation` | Juan — API |
+| `feature/003-frontend-components` | Jhony — Frontend completo |

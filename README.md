@@ -2,7 +2,7 @@
 
 **Asignatura:** Desarrollo de Aplicaciones Web  
 **Universidad de Panamá**  
-**Modalidad:** Trabajo en equipo — 4 integrantes  
+**Modalidad:** Trabajo en equipo — 3 integrantes  
 **Temática:** A — Tienda en Línea (Marketplace de Tecnología)
 
 ---
@@ -11,10 +11,9 @@
 
 | Integrante | Usuario GitHub | Área |
 |---|---|---|
-| Victor Perez | rxppxc | Domain + SQL + Use Cases |
-| Juan | - | API Infrastructure + Presentation |
-| Jhony | jotta | Django Frontend - Componentes + Home |
-| Anthony | - | Django Frontend - Páginas + URLs + API Client |
+| Victor Perez | rxppxc | Domain + Use Cases + SQL |
+| Juan Pineda | - | API REST (Infrastructure + Presentation) |
+| Jhony Zarco | jotta | Django Frontend completo |
 
 ---
 
@@ -64,5 +63,4 @@ Frontend disponible en: `http://localhost:8000`
 | `develop` | Integración del equipo |
 | `feature/001-domain-entities-sql` | Victor — Domain + SQL |
 | `feature/002-api-infra-presentation` | Juan — API |
-| `feature/003-frontend-components` | Jhony — Frontend componentes |
-| `feature/004-frontend-pages` | Anthony — Frontend páginas |
+| `feature/003-frontend-components` | Jhony — Frontend completo |

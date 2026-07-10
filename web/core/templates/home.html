@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block title %}Inicio | Marketplace de Tecnología{% endblock %}
+
+{% block content %}
+<section class="hero-section">
+    <div class="container text-center py-5">
+        <h1 class="display-4 fw-bold text-white">Marketplace de tecnología para tu próximo proyecto</h1>
+        <p class="lead text-white-50 mb-4">Explora productos innovadores, consulta categorías y revisa pedidos en un solo lugar.</p>
+        <a href="{% url 'catalog' %}" class="btn btn-light btn-lg">Ver Productos</a>
+    </div>
+</section>
+
+<section class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold">Categorías destacadas</h2>
+    </div>
+    <div class="row g-4">
+        {% for categoria in categorias|slice:':6' %}
+        <div class="col-12 col-md-6 col-lg-4">
+            <a href="{% url 'categories' %}?categoria_id={{ categoria.id }}" class="text-decoration-none text-dark">
+                <div class="card h-100 shadow-sm category-card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ categoria.nombre }}</h5>
+                        <p class="card-text text-muted">{{ categoria.descripcion|default:'Categoría disponible' }}</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% empty %}
+        <p class="text-muted">No hay categorías disponibles.</p>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="container pb-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold">Productos destacados</h2>
+    </div>
+    <div class="row g-4">
+        {% for producto in productos|slice:':6' %}
+        <div class="col-12 col-md-6 col-lg-4">
+            {% include 'components/product_card.html' with producto=producto %}
+        </div>
+        {% empty %}
+        <p class="text-muted">No hay productos disponibles.</p>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

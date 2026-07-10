@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}Categorías | Marketplace{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Inicio</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Categorías</li>
+            {% if categoria_sel %}
+            <li class="breadcrumb-item active" aria-current="page">{{ categoria_sel.nombre }}</li>
+            {% endif %}
+        </ol>
+    </nav>
+
+    <h1 class="fw-bold mb-4">Categorías</h1>
+    <div class="row g-4 mb-5">
+        {% for categoria in categorias %}
+        <div class="col-12 col-md-6 col-lg-4">
+            <a href="{% url 'categories' %}?categoria_id={{ categoria.id }}" class="text-decoration-none text-dark">
+                <div class="card h-100 shadow-sm category-card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ categoria.nombre }}</h5>
+                        <p class="card-text text-muted">{{ categoria.descripcion|default:'Categoría disponible' }}</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% empty %}
+        <p class="text-muted">No hay categorías disponibles.</p>
+        {% endfor %}
+    </div>
+
+    {% if categoria_sel %}
+    <h2 class="fw-bold mb-4">Productos de {{ categoria_sel.nombre }}</h2>
+    <div class="row g-4">
+        {% for producto in productos %}
+        <div class="col-12 col-md-6 col-lg-4">
+            {% include 'components/product_card.html' with producto=producto %}
+        </div>
+        {% empty %}
+        <p class="text-muted">No hay productos para esta categoría.</p>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

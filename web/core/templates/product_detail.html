@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ producto.nombre }} | Marketplace{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <a href="{% url 'catalog' %}" class="btn btn-outline-secondary mb-4">← Volver</a>
+    <div class="row g-4">
+        <div class="col-lg-5">
+            <img src="https://placehold.co/800x600?text={{ producto.nombre|default:'Producto' }}" class="img-fluid rounded shadow-sm" alt="{{ producto.nombre }}">
+        </div>
+        <div class="col-lg-7">
+            <h1 class="fw-bold">{{ producto.nombre }}</h1>
+            <p class="text-muted">{{ categoria.nombre|default:'Sin categoría' }}</p>
+            <h2 class="text-primary">${{ producto.precio }}</h2>
+            <p class="lead">{{ producto.descripcion }}</p>
+            <ul class="list-group list-group-flush mb-4">
+                <li class="list-group-item"><strong>Stock:</strong> {{ producto.stock }}</li>
+                <li class="list-group-item"><strong>Stock mínimo:</strong> {{ producto.stock_minimo }}</li>
+            </ul>
+            <form class="row g-2 align-items-end">
+                <div class="col-auto">
+                    <label for="cantidad" class="form-label">Cantidad</label>
+                    <input type="number" class="form-control" id="cantidad" value="1" min="1" max="{{ producto.stock }}">
+                </div>
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-primary">Agregar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <section class="mt-5">
+        <h3 class="fw-bold mb-3">Productos relacionados</h3>
+        <div class="row g-4">
+            {% for relacionado in relacionados %}
+            <div class="col-12 col-md-6 col-lg-3">
+                {% include 'components/product_card.html' with producto=relacionado %}
+            </div>
+            {% empty %}
+            <p class="text-muted">No hay productos relacionados.</p>
+            {% endfor %}
+        </div>
+    </section>
+</div>
+{% endblock %}

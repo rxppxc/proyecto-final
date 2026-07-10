@@ -1,0 +1,71 @@
+:root {
+    --color-primary: #1a237e;
+    --color-secondary: #ff6f00;
+}
+
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background: #f8f9fa;
+    color: #1f2937;
+}
+
+.navbar {
+    background: var(--color-primary);
+}
+
+.navbar .nav-link,
+.navbar .navbar-brand {
+    color: #fff;
+}
+
+.hero-section {
+    background: linear-gradient(135deg, var(--color-primary), #3949ab);
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.product-card,
+.category-card {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.product-card:hover,
+.category-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+}
+
+.badge.bg-danger {
+    background-color: #dc2626 !important;
+}
+
+.footer {
+    background: #111827;
+    color: #d1d5db;
+}
+
+@media (max-width: 767px) {
+    .row > .col-12.col-md-6.col-lg-4 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+    .row > .col-12.col-md-6.col-lg-4 {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+}
+
+@media (min-width: 992px) {
+    .row > .col-12.col-md-6.col-lg-4 {
+        flex: 0 0 33.3333%;
+        max-width: 33.3333%;
+    }
+}

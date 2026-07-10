@@ -1,50 +1,84 @@
 {% extends 'base.html' %}
-
-{% block title %}Inicio | Marketplace de Tecnología{% endblock %}
+{% load static %}
+{% block title %}Inicio — Marketplace de Tecnología{% endblock %}
 
 {% block content %}
-<section class="hero-section">
-    <div class="container text-center py-5">
-        <h1 class="display-4 fw-bold text-white">Marketplace de tecnología para tu próximo proyecto</h1>
-        <p class="lead text-white-50 mb-4">Explora productos innovadores, consulta categorías y revisa pedidos en un solo lugar.</p>
-        <a href="{% url 'catalog' %}" class="btn btn-light btn-lg">Ver Productos</a>
-    </div>
-</section>
 
-<section class="container py-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold">Categorías destacadas</h2>
-    </div>
-    <div class="row g-4">
-        {% for categoria in categorias|slice:':6' %}
-        <div class="col-12 col-md-6 col-lg-4">
-            <a href="{% url 'categories' %}?categoria_id={{ categoria.id }}" class="text-decoration-none text-dark">
-                <div class="card h-100 shadow-sm category-card">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ categoria.nombre }}</h5>
-                        <p class="card-text text-muted">{{ categoria.descripcion|default:'Categoría disponible' }}</p>
-                    </div>
-                </div>
-            </a>
+<div id="heroCarousel" class="carousel slide hero-carousel" data-bs-ride="carousel">
+  <div class="carousel-inner">
+    <div class="carousel-item active">
+      <div class="hero-slide d-flex align-items-center justify-content-center text-white text-center">
+        <div class="hero-content">
+          <p class="hero-eyebrow"><i class="bi bi-lightning-charge-fill me-1"></i>Tecnología al alcance de tu proyecto</p>
+          <h1 class="display-4 fw-bold mb-3">Marketplace de Tecnología</h1>
+          <p class="lead mb-4">Explora productos innovadores, consulta categorías y revisa pedidos en un solo lugar.</p>
+          <a href="/productos/" class="btn btn-warning btn-lg fw-bold px-5"><i class="bi bi-grid me-2"></i>Ver Productos</a>
         </div>
-        {% empty %}
-        <p class="text-muted">No hay categorías disponibles.</p>
-        {% endfor %}
+      </div>
     </div>
-</section>
+    <div class="carousel-item">
+      <div class="hero-slide hero-slide-alt d-flex align-items-center justify-content-center text-white text-center">
+        <div class="hero-content">
+          <p class="hero-eyebrow"><i class="bi bi-shield-check me-1"></i>Calidad garantizada</p>
+          <h1 class="display-4 fw-bold mb-3">Envíos a todo Panamá</h1>
+          <p class="lead mb-4">Productos originales con garantía y soporte técnico incluido.</p>
+          <a href="/categorias/" class="btn btn-warning btn-lg fw-bold px-5"><i class="bi bi-tags me-2"></i>Ver Categorías</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon"></span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+    <span class="carousel-control-next-icon"></span>
+  </button>
+  <div class="carousel-indicators">
+    <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active"></button>
+    <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1"></button>
+  </div>
+</div>
 
-<section class="container pb-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold">Productos destacados</h2>
+<div class="container py-5">
+
+  <section class="estadisticas-section mb-5">
+    <div class="row g-3 text-center">
+      <div class="col-6 col-md-3"><div class="stat-card"><span class="stat-num">{{ productos|length }}+</span><p>Productos</p></div></div>
+      <div class="col-6 col-md-3"><div class="stat-card"><span class="stat-num">{{ categorias|length }}+</span><p>Categorías</p></div></div>
+      <div class="col-6 col-md-3"><div class="stat-card"><span class="stat-num">24h</span><p>Entrega rápida</p></div></div>
+      <div class="col-6 col-md-3"><div class="stat-card"><span class="stat-num">100%</span><p>Garantía</p></div></div>
     </div>
+  </section>
+
+  <section class="mb-5">
+    <h2 class="section-title mb-4"><i class="bi bi-tags me-2"></i>Categorías destacadas</h2>
+    <div class="row g-3">
+      {% for cat in categorias %}
+      <div class="col-6 col-md-4 col-lg-3">
+        <a href="/categorias/?categoria_id={{ cat.id }}" class="text-decoration-none">
+          <div class="card category-card text-center p-4 h-100">
+            <i class="bi bi-tag-fill fs-1 text-primary mb-2"></i>
+            <h6 class="fw-bold text-dark mb-1">{{ cat.nombre }}</h6>
+            <small class="text-muted">{{ cat.descripcion|truncatechars:40 }}</small>
+          </div>
+        </a>
+      </div>
+      {% empty %}
+      <div class="col-12"><div class="alert alert-secondary"><i class="bi bi-info-circle me-2"></i>No hay categorías disponibles.</div></div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section>
+    <h2 class="section-title mb-4"><i class="bi bi-star-fill me-2"></i>Productos destacados</h2>
     <div class="row g-4">
-        {% for producto in productos|slice:':6' %}
-        <div class="col-12 col-md-6 col-lg-4">
-            {% include 'components/product_card.html' with producto=producto %}
-        </div>
-        {% empty %}
-        <p class="text-muted">No hay productos disponibles.</p>
-        {% endfor %}
+      {% for p in productos %}
+      <div class="col-12 col-md-6 col-lg-4">{% include 'components/product_card.html' with producto=p %}</div>
+      {% empty %}
+      <div class="col-12"><div class="alert alert-secondary"><i class="bi bi-info-circle me-2"></i>No hay productos disponibles.</div></div>
+      {% endfor %}
     </div>
-</section>
+  </section>
+
+</div>
 {% endblock %}

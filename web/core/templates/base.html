@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
   {% block extra_css %}{% endblock %}
 </head>
-<body>
+<body class="d-flex flex-column min-vh-100">
 
   <nav class="navbar navbar-expand-lg navbar-dark navbar-custom sticky-top">
     <div class="container">
@@ -19,24 +19,24 @@
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navMenu">
-        <ul class="navbar-nav ms-auto gap-1">
+        <ul class="navbar-nav ms-auto gap-1 align-items-center">
           <li class="nav-item"><a class="nav-link {% if request.path == '/' %}active{% endif %}" href="/"><i class="bi bi-house me-1"></i>Inicio</a></li>
           <li class="nav-item"><a class="nav-link {% if '/productos/' in request.path %}active{% endif %}" href="/productos/"><i class="bi bi-grid me-1"></i>Productos</a></li>
           <li class="nav-item"><a class="nav-link {% if '/categorias/' in request.path %}active{% endif %}" href="/categorias/"><i class="bi bi-tags me-1"></i>Categorías</a></li>
+          <li class="nav-item ms-2">
+            <a class="nav-link position-relative {% if '/carrito/' in request.path or '/checkout/' in request.path %}active{% endif %}" href="/carrito/" aria-label="Carrito">
+              <i class="bi bi-cart3 fs-5"></i>
+              {% if carrito_count > 0 %}
+              <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark" style="font-size:.65rem;">
+                {{ carrito_count }}
+              </span>
+              {% endif %}
+            </a>
+          </li>
         </ul>
       </div>
     </div>
   </nav>
-
-  {% if messages %}
-  <div class="container mt-3">
-    {% for mensaje in messages %}
-    <div class="alert alert-{{ mensaje.tags }} alert-dismissible fade show" role="alert">
-      {{ mensaje }}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
-    {% endfor %}
-  </div>
-  {% endif %}
 
   <main class="flex-grow-1">
     {% block content %}{% endblock %}

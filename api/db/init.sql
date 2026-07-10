@@ -3,6 +3,9 @@
 -- Temática A: Tienda en Línea
 -- ============================================================
 
+SET NAMES utf8mb4;
+SET CHARACTER SET utf8mb4;
+
 CREATE DATABASE IF NOT EXISTS marketplace_db
   CHARACTER SET utf8mb4
   COLLATE utf8mb4_unicode_ci;
@@ -14,7 +17,7 @@ CREATE TABLE categorias (
   nombre      VARCHAR(100) NOT NULL,
   descripcion TEXT,
   created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 CREATE TABLE productos (
   id           INT AUTO_INCREMENT PRIMARY KEY,
@@ -27,14 +30,14 @@ CREATE TABLE productos (
   created_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   FOREIGN KEY (categoria_id) REFERENCES categorias(id)
-);
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 CREATE TABLE pedidos (
   id     INT AUTO_INCREMENT PRIMARY KEY,
   fecha  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   total  DECIMAL(10,2) NOT NULL DEFAULT 0,
   estado ENUM('pendiente','completado','cancelado') DEFAULT 'pendiente'
-);
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 CREATE TABLE items_pedido (
   id              INT AUTO_INCREMENT PRIMARY KEY,
@@ -44,7 +47,7 @@ CREATE TABLE items_pedido (
   precio_unitario DECIMAL(10,2) NOT NULL,
   FOREIGN KEY (pedido_id)   REFERENCES pedidos(id),
   FOREIGN KEY (producto_id) REFERENCES productos(id)
-);
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 INSERT INTO categorias (nombre, descripcion) VALUES
   ('Laptops',     'Computadoras portátiles y ultrabooks'),

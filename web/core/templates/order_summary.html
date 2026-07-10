@@ -1,53 +1,150 @@
 {% extends 'base.html' %}
-{% block title %}Pedido #{{ pedido.id }} — TechMarket{% endblock %}
+{% block title %}Pedido #{{ pedido.id }} confirmado — TechMarket{% endblock %}
+
+{% block extra_css %}
+<style>
+  .steps { display: flex; align-items: center; justify-content: center; gap: 0; margin-bottom: 2.5rem; }
+  .step-node { display: flex; flex-direction: column; align-items: center; gap: .3rem; }
+  .step-circle {
+    width: 2.4rem; height: 2.4rem; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: .95rem; border: 2.5px solid;
+  }
+  .step-circle.done { background: #198754; border-color: #198754; color: #fff; }
+  .step-label { font-size: .78rem; font-weight: 600; }
+  .step-label.done { color: #198754; }
+  .step-line  { flex: 1; height: 2.5px; max-width: 5rem; margin: 0 .3rem; margin-bottom: 1.2rem; }
+  .step-line.done { background: #198754; }
+
+  @keyframes popIn { 0% { transform: scale(.4); opacity: 0; } 70% { transform: scale(1.15); } 100% { transform: scale(1); opacity: 1; } }
+  .success-icon i { animation: popIn .5s ease both; }
+</style>
+{% endblock %}
 
 {% block content %}
 <div class="container py-5">
   <div class="row justify-content-center">
     <div class="col-12 col-lg-8">
 
-      <div class="order-header d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
-        <h2 class="fw-bold mb-0"><i class="bi bi-receipt me-2"></i>Pedido #{{ pedido.id }}</h2>
-        {% if pedido.estado == 'completado' %}
-          <span class="badge bg-success fs-6 px-3 py-2"><i class="bi bi-check-circle me-1"></i>Completado</span>
-        {% elif pedido.estado == 'cancelado' %}
-          <span class="badge bg-danger fs-6 px-3 py-2"><i class="bi bi-x-circle me-1"></i>Cancelado</span>
-        {% else %}
-          <span class="badge bg-warning text-dark fs-6 px-3 py-2"><i class="bi bi-clock me-1"></i>Pendiente</span>
+      <!-- Indicador de pasos (todos completados) -->
+      <div class="steps">
+        <div class="step-node">
+          <div class="step-circle done"><i class="bi bi-check-lg"></i></div>
+          <div class="step-label done">Carrito</div>
+        </div>
+        <div class="step-line done"></div>
+        <div class="step-node">
+          <div class="step-circle done"><i class="bi bi-check-lg"></i></div>
+          <div class="step-label done">Datos y pago</div>
+        </div>
+        <div class="step-line done"></div>
+        <div class="step-node">
+          <div class="step-circle done"><i class="bi bi-check-lg"></i></div>
+          <div class="step-label done">Confirmado</div>
+        </div>
+      </div>
+
+      <!-- Banner de éxito -->
+      <div class="text-center mb-5">
+        <div class="success-icon mb-3">
+          <i class="bi bi-check-circle-fill text-success" style="font-size:4rem;"></i>
+        </div>
+        <h1 class="fw-bold mb-1">¡Pedido confirmado!</h1>
+        <p class="text-muted fs-5 mb-0">Tu pedido #{{ pedido.id }} fue procesado exitosamente.</p>
+        {% if email_cliente %}
+        <p class="text-muted small mt-2">
+          <i class="bi bi-envelope-check me-1"></i>
+          Se envió una confirmación a <strong>{{ email_cliente }}</strong>
+        </p>
         {% endif %}
       </div>
 
-      <p class="text-muted mb-4"><i class="bi bi-calendar me-1"></i>Fecha: {{ pedido.fecha }}</p>
+      <!-- Tarjeta de resumen -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+          <span class="fw-bold fs-5"><i class="bi bi-receipt me-2"></i>Pedido #{{ pedido.id }}</span>
+          {% if pedido.estado == 'completado' %}
+            <span class="badge bg-success px-3 py-2"><i class="bi bi-check-circle me-1"></i>Completado</span>
+          {% elif pedido.estado == 'cancelado' %}
+            <span class="badge bg-danger px-3 py-2"><i class="bi bi-x-circle me-1"></i>Cancelado</span>
+          {% else %}
+            <span class="badge bg-warning text-dark px-3 py-2"><i class="bi bi-clock me-1"></i>Pendiente</span>
+          {% endif %}
+        </div>
 
-      <div class="card order-card shadow-sm mb-4">
-        <div class="card-body p-0">
+        <div class="card-body">
+          <p class="text-muted mb-3"><i class="bi bi-calendar3 me-1"></i>{{ pedido.fecha }}</p>
+
           <table class="table table-hover mb-0">
             <thead class="table-dark">
-              <tr><th>Producto</th><th class="text-center">Cantidad</th><th class="text-end">Precio unit.</th><th class="text-end">Subtotal</th></tr>
+              <tr>
+                <th>Producto</th>
+                <th class="text-center">Cant.</th>
+                <th class="text-end">Precio unit.</th>
+                <th class="text-end">Subtotal</th>
+              </tr>
             </thead>
             <tbody>
               {% for item in pedido.items %}
               <tr>
-                <td class="fw-semibold">Producto #{{ item.producto_id }}</td>
+                <td class="fw-semibold">{{ item.nombre|default:item.producto_id }}</td>
                 <td class="text-center">{{ item.cantidad }}</td>
                 <td class="text-end">${{ item.precio_unitario }}</td>
                 <td class="text-end fw-bold">${{ item.subtotal }}</td>
               </tr>
               {% empty %}
-              <tr><td colspan="4" class="text-center text-muted py-4">Este pedido no tiene items registrados.</td></tr>
+              <tr>
+                <td colspan="4" class="text-center text-muted py-4">Sin items registrados.</td>
+              </tr>
               {% endfor %}
             </tbody>
             <tfoot>
-              <tr class="table-total">
-                <td colspan="3" class="text-end fw-bold fs-5">TOTAL:</td>
-                <td class="text-end fw-bold fs-5 text-secondary-custom">${{ pedido.total }}</td>
+              <tr class="table-light">
+                <td colspan="3" class="text-end fw-bold fs-5 py-3">Total:</td>
+                <td class="text-end fw-bold fs-5 text-secondary-custom py-3">${{ pedido.total }}</td>
               </tr>
             </tfoot>
           </table>
         </div>
+
+        {% if metodo_pago %}
+        <div class="card-footer d-flex align-items-center gap-2 text-muted">
+          <i class="bi bi-wallet2"></i>
+          <span>Método de pago: <strong class="text-dark">{{ metodo_pago }}</strong></span>
+        </div>
+        {% endif %}
       </div>
 
-      <a href="/" class="btn btn-outline-primary"><i class="bi bi-house me-1"></i>Volver al inicio</a>
+      <!-- Pasos siguientes -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-header fw-semibold"><i class="bi bi-list-check me-2"></i>¿Qué sigue?</div>
+        <div class="card-body p-0">
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item d-flex align-items-center gap-3 py-3">
+              <span class="badge bg-warning text-dark rounded-pill px-3 py-2 fs-6">1</span>
+              <span>Recibirás un correo de confirmación con el detalle de tu pedido.</span>
+            </li>
+            <li class="list-group-item d-flex align-items-center gap-3 py-3">
+              <span class="badge bg-warning text-dark rounded-pill px-3 py-2 fs-6">2</span>
+              <span>Procesamos y preparamos tu pedido en nuestro almacén.</span>
+            </li>
+            <li class="list-group-item d-flex align-items-center gap-3 py-3">
+              <span class="badge bg-warning text-dark rounded-pill px-3 py-2 fs-6">3</span>
+              <span>Tu pedido es enviado y llegará en 2–5 días hábiles.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="d-flex gap-3 flex-wrap">
+        <a href="/" class="btn btn-warning fw-bold px-4">
+          <i class="bi bi-bag me-2"></i>Seguir comprando
+        </a>
+        <a href="/productos/" class="btn btn-outline-secondary">
+          <i class="bi bi-grid me-1"></i>Ver más productos
+        </a>
+      </div>
+
     </div>
   </div>
 </div>

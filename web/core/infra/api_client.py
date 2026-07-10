@@ -17,7 +17,7 @@ class CatalogApiClient:
         try:
             r = requests.get(f'{self.base_url}/api/productos', timeout=5)
             r.raise_for_status()
-            return r.json()
+            return r.json().get('data', [])
         except Exception as e:
             print(f"[ERROR] get_productos: {e}")
             return []
@@ -26,7 +26,7 @@ class CatalogApiClient:
         try:
             r = requests.get(f'{self.base_url}/api/productos/{producto_id}', timeout=5)
             r.raise_for_status()
-            return r.json()
+            return r.json().get('data', None)
         except Exception as e:
             print(f"[ERROR] get_producto({producto_id}): {e}")
             return None
@@ -35,7 +35,7 @@ class CatalogApiClient:
         try:
             r = requests.get(f'{self.base_url}/api/productos/low-stock', timeout=5)
             r.raise_for_status()
-            return r.json()
+            return r.json().get('data', [])
         except Exception as e:
             print(f"[ERROR] get_low_stock: {e}")
             return []
@@ -45,7 +45,7 @@ class CatalogApiClient:
         try:
             r = requests.get(f'{self.base_url}/api/categorias', timeout=5)
             r.raise_for_status()
-            return r.json()
+            return r.json().get('data', [])
         except Exception as e:
             print(f"[ERROR] get_categorias: {e}")
             return []
@@ -54,7 +54,7 @@ class CatalogApiClient:
         try:
             r = requests.get(f'{self.base_url}/api/categorias/{categoria_id}', timeout=5)
             r.raise_for_status()
-            return r.json()
+            return r.json().get('data', None)
         except Exception as e:
             print(f"[ERROR] get_categoria({categoria_id}): {e}")
             return None
@@ -64,7 +64,7 @@ class CatalogApiClient:
         try:
             r = requests.get(f'{self.base_url}/api/pedidos', timeout=5)
             r.raise_for_status()
-            return r.json()
+            return r.json().get('data', [])
         except Exception as e:
             print(f"[ERROR] get_pedidos: {e}")
             return []
@@ -73,7 +73,7 @@ class CatalogApiClient:
         try:
             r = requests.get(f'{self.base_url}/api/pedidos/{pedido_id}', timeout=5)
             r.raise_for_status()
-            return r.json()
+            return r.json().get('data', None)
         except Exception as e:
             print(f"[ERROR] get_pedido({pedido_id}): {e}")
             return None
@@ -82,7 +82,7 @@ class CatalogApiClient:
         try:
             r = requests.post(f'{self.base_url}/api/pedidos', json=data, timeout=5)
             r.raise_for_status()
-            return r.json()
+            return r.json().get('data', None)
         except Exception as e:
             print(f"[ERROR] crear_pedido: {e}")
             return None
@@ -91,7 +91,7 @@ class CatalogApiClient:
         try:
             r = requests.get(f'{self.base_url}/api/pedidos/ventas-categoria', timeout=5)
             r.raise_for_status()
-            return r.json()
+            return r.json().get('data', [])
         except Exception as e:
             print(f"[ERROR] get_ventas_categoria: {e}")
             return []

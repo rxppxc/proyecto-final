@@ -36,7 +36,7 @@ export class MySQLProductRepository implements IProductRepository {
         FROM productos p
         LEFT JOIN categorias c ON p.categoria_id = c.id
       `);
-      return filas.map((fila) => ({ ...fila }));
+      return filas.map((fila: ProductRow) => ({ ...fila }));
     } catch (error) {
       console.error('MySQLProductRepository.findAll falló:', error);
       throw error;
@@ -88,7 +88,7 @@ export class MySQLProductRepository implements IProductRepository {
         LEFT JOIN categorias c ON p.categoria_id = c.id
         WHERE p.stock > 0
       `);
-      return filas.map((fila) => ({ ...fila }));
+      return filas.map((fila: ProductRow) => ({ ...fila }));
     } catch (error) {
       console.error('MySQLProductRepository.findAvailable falló:', error);
       throw error;
@@ -113,7 +113,7 @@ export class MySQLProductRepository implements IProductRepository {
         LEFT JOIN categorias c ON p.categoria_id = c.id
         WHERE p.stock < p.stock_minimo
       `);
-      return filas.map((fila) => ({ ...fila }));
+      return filas.map((fila: ProductRow) => ({ ...fila }));
     } catch (error) {
       console.error('MySQLProductRepository.findLowStock falló:', error);
       throw error;
@@ -162,7 +162,7 @@ export class MySQLProductRepository implements IProductRepository {
       };
 
       const setClauses: string[] = [];
-      const valores: unknown[] = [];
+      const valores: any[] = [];
 
       for (const [clave, valor] of Object.entries(campos)) {
         const columna = columnasMapeadas[clave];

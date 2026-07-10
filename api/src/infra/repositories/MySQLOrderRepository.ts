@@ -10,6 +10,15 @@ interface OrderRow extends RowDataPacket {
   estado: 'pendiente' | 'completado' | 'cancelado';
 }
 
+// Tipo auxiliar para las filas de items de pedido
+interface ItemRow extends RowDataPacket {
+  id: number;
+  pedido_id: number;
+  producto_id: number;
+  cantidad: number;
+  precio_unitario: number;
+}
+
 // Tipo auxiliar para el resultado de ventas por categoría
 interface VentasCategoriaRow extends RowDataPacket {
   categoria: string;
@@ -28,14 +37,14 @@ export class MySQLOrderRepository implements IOrderRepository {
         FROM pedidos
         ORDER BY fecha DESC
       `);
-      return filas.map((fila) => ({ ...fila }));
+      return filas.map((fila: OrderRow) => ({ ...fila }));
     } catch (error) {
       console.error('MySQLOrderRepository.findAll falló:', error);
       throw error;
     }
   }
 
-  // ─── Busca un pedido por ID, retorna null si no existe ──────────────────────
+  // ─── Busca un pedido por ID incluyendo sus items ────────────────────────────
   async findById(id: number): Promise<Order | null> {
     try {
       const [filas] = await this.connection.execute<OrderRow[]>(
@@ -43,7 +52,14 @@ export class MySQLOrderRepository implements IOrderRepository {
         [id]
       );
       if (filas.length === 0) return null;
-      return { ...filas[0] };
+
+      const [items] = await this.connection.execute<ItemRow[]>(
+        `SELECT id, pedido_id, producto_id, cantidad, precio_unitario
+         FROM items_pedido WHERE pedido_id = ?`,
+        [id]
+      );
+
+      return { ...filas[0], items: items.map((i: ItemRow) => ({ ...i })) };
     } catch (error) {
       console.error(`MySQLOrderRepository.findById (id=${id}) falló:`, error);
       throw error;
@@ -114,7 +130,7 @@ export class MySQLOrderRepository implements IOrderRepository {
         GROUP BY c.id, c.nombre
         ORDER BY total_ventas DESC
       `);
-      return filas.map((fila) => ({
+      return filas.map((fila: VentasCategoriaRow) => ({
         categoria: fila.categoria,
         total_ventas: Number(fila.total_ventas),
       }));

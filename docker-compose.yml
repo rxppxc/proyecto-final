@@ -6,7 +6,7 @@ services:
     restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: app_db
+      MYSQL_DATABASE: marketplace_db
     ports:
       - "3306:3306"
     volumes:
@@ -22,7 +22,7 @@ services:
     environment:
       DB_HOST: db
       DB_PORT: 3306
-      DB_NAME: app_db
+      DB_NAME: marketplace_db
       DB_USER: root
       DB_PASSWORD: root
       PORT: 3000
@@ -39,8 +39,19 @@ services:
       API_BASE_URL: http://api:3000
       DJANGO_DEBUG: "True"
       DJANGO_ALLOWED_HOSTS: "0.0.0.0 localhost"
+      EMAIL_HOST: mailhog
+      EMAIL_PORT: "1025"
     depends_on:
       - api
+      - mailhog
+
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: mailhog
+    restart: unless-stopped
+    ports:
+      - "1025:1025"   # SMTP (recibe los correos de Django)
+      - "8025:8025"   # UI web (para ver los correos)
 
 volumes:
   db_data:

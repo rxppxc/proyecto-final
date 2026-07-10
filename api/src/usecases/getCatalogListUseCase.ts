@@ -5,6 +5,6 @@ export class GetCatalogListUseCase {
   constructor(private readonly repository: CatalogRepository) {}
 
   async execute(): Promise<CatalogItem[]> {
-    return this.repository.getAll(0);
+    return this.repository.getAll();
   }
 }

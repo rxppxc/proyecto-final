@@ -1,7 +1,5 @@
 import { IOrderRepository } from '../domain/repositories/IOrderRepository';
-import { IOrderItemRepository } from '../domain/repositories/IOrderItemRepository';
 import { Order } from '../domain/entities/Order';
-import { OrderItem } from '../domain/entities/OrderItem';
 
 interface ItemInput {
   producto_id: number;
@@ -14,10 +12,7 @@ interface CreateOrderInput {
 }
 
 export class CreateOrderUseCase {
-  constructor(
-    private readonly orderRepository: IOrderRepository,
-    private readonly orderItemRepository: IOrderItemRepository
-  ) {}
+  constructor(private readonly orderRepository: IOrderRepository) {}
 
   async execute(datos: CreateOrderInput): Promise<Order> {
     // Validar que el pedido tenga al menos un item
@@ -40,25 +35,12 @@ export class CreateOrderUseCase {
       0
     );
 
-    // Crear el pedido en la base de datos
-    const nuevoPedido = await this.orderRepository.create({
+    // Crear pedido con items — el repositorio maneja la transacción completa
+    // pedido_id se asigna dentro del repositorio tras el INSERT
+    return this.orderRepository.create({
       total,
       estado: 'pendiente',
+      items: datos.items.map((item) => ({ ...item, pedido_id: 0 })),
     });
-
-    // Crear cada item asociado al pedido recién creado
-    const itemsCreados: OrderItem[] = [];
-    for (const item of datos.items) {
-      const itemCreado = await this.orderItemRepository.create({
-        pedido_id: nuevoPedido.id!,
-        producto_id: item.producto_id,
-        cantidad: item.cantidad,
-        precio_unitario: item.precio_unitario,
-      });
-      itemsCreados.push(itemCreado);
-    }
-
-    // Retornar el pedido completo con sus items
-    return { ...nuevoPedido, items: itemsCreados };
   }
 }

@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Contacto — TechMarket{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+
+  <!-- Encabezado principal de la página -->
+  <section class="text-center mb-5">
+    <h1 class="fw-bold section-title d-inline-block">Contáctanos</h1>
+    <p class="text-muted mt-3">¿Dudas, sugerencias o soporte? Escríbenos</p>
+  </section>
+
+  <!-- Sección de información de contacto con tarjetas que muestran ubicación, correo y horario -->
+  <div class="row g-4 mb-5 text-center">
+    <div class="col-12 col-md-4">
+      <div class="stat-card h-100">
+        <i class="bi bi-geo-alt fs-1 text-secondary-custom mb-2"></i>
+        <h6 class="fw-bold">Ubicación</h6>
+        <p class="text-muted mb-0">Universidad de Panamá<br>Panamá, Panamá</p>
+      </div>
+    </div>
+
+    <!-- Columna con tarjeta de correo electrónico -->
+    <div class="col-12 col-md-4">
+      <div class="stat-card h-100">
+        <i class="bi bi-envelope fs-1 text-secondary-custom mb-2"></i>
+        <h6 class="fw-bold">Correo</h6>
+        <p class="text-muted mb-0">contacto@techmarket.com</p>
+      </div>
+    </div>
+
+    <!-- Columna con tarjeta de horario de atención -->
+    <div class="col-12 col-md-4">
+      <div class="stat-card h-100">
+        <i class="bi bi-clock fs-1 text-secondary-custom mb-2"></i>
+        <h6 class="fw-bold">Horario</h6>
+        <p class="text-muted mb-0">Lunes a Viernes<br>8AM - 6PM</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Formulario de contacto con campos para nombre, correo, asunto y mensaje -->      
+  <div class="row justify-content-center">
+    <div class="col-12 col-lg-7">
+      <div class="card border-0 shadow-sm p-4 p-md-5" style="border-radius: var(--radius);">
+        <h4 class="fw-bold mb-4">Envíanos un mensaje</h4>
+        <form method="post" action="/contacto/enviar/">
+          {% csrf_token %}
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Nombre completo</label>
+            <input type="text" name="nombre" class="form-control" required placeholder="Tu nombre">
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Correo electrónico</label>
+            <input type="email" name="correo" class="form-control" required placeholder="tu@email.com">
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Asunto</label>
+            <select name="asunto" class="form-select">
+              <option value="soporte">Soporte técnico</option>
+              <option value="pedido">Consulta sobre pedido</option>
+              <option value="sugerencia">Sugerencia</option>
+              <option value="otro">Otro</option>
+            </select>
+          </div>
+          <div class="mb-4">
+            <label class="form-label fw-semibold">Mensaje</label>
+            <textarea name="mensaje" class="form-control" rows="5" required placeholder="Cuéntanos en qué te ayudamos..."></textarea>
+          </div>
+
+          #boton de envío del formulario con ícono y estilo personalizado
+          <button type="submit" class="btn btn-warning fw-bold w-100 py-2">
+            <i class="bi bi-send me-2"></i>Enviar mensaje
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

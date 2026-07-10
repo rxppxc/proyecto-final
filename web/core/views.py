@@ -1,24 +1,71 @@
+# web/core/views.py
 from django.conf import settings
+from django.http import Http404
 from django.shortcuts import render
-from requests.exceptions import RequestException
 
 from .infra.api_client import CatalogApiClient
-from .services.catalog_service import CatalogService
+
+# ──────────────────────────────────────────────────────────────
+# Instancia única del cliente API (evita crear una nueva
+# conexión en cada vista — se reutiliza en todo el módulo)
+# ──────────────────────────────────────────────────────────────
+api_client = CatalogApiClient(settings.API_BASE_URL)
 
 
-def home(request):
-    api_client = CatalogApiClient(settings.API_BASE_URL)
-    service = CatalogService(api_client)
-    data = []
-    error_message = None
+def home_view(request):
+    """Vista principal del marketplace con productos y categorías."""
+    productos = api_client.get_productos()
+    categorias = api_client.get_categorias()
+    return render(request, 'home.html', {'productos': productos, 'categorias': categorias})
 
-    try:
-        data = service.get_catalog()
-    except RequestException as exc:
-        error_message = 'No se pudo conectar con la API de catálogo.'
-        print('Catalog API connection error:', exc)
-    except ValueError as exc:
-        error_message = 'La respuesta de la API no es válida.'
-        print('Catalog API parse error:', exc)
 
-    return render(request, 'index.html', {'data': data, 'error_message': error_message})
+def product_detail_view(request, producto_id):
+    """Vista de detalle de un producto con productos relacionados."""
+    producto = api_client.get_producto(producto_id)
+    if not producto:
+        raise Http404('Producto no encontrado')
+
+    categoria = api_client.get_categoria(producto.get('categoria_id'))
+    relacionados = api_client.get_productos()
+    relacionados = [
+        p for p in relacionados
+        if str(p.get('categoria_id')) == str(producto.get('categoria_id'))
+        and p.get('id') != producto.get('id')
+    ][:4]
+
+    return render(request, 'product_detail.html', {
+        'producto': producto,
+        'categoria': categoria,
+        'relacionados': relacionados,
+    })
+
+
+def categories_view(request):
+    """Vista de categorías con filtrado de productos por categoría."""
+    categorias = api_client.get_categorias()
+    categoria_id = request.GET.get('categoria_id')
+    productos = []
+    categoria_sel = None
+
+    if categoria_id:
+        productos = api_client.get_productos()
+        productos = [
+            p for p in productos
+            if str(p.get('categoria_id')) == str(categoria_id)
+        ]
+        categoria_sel = api_client.get_categoria(categoria_id)
+
+    return render(request, 'categories.html', {
+        'categorias': categorias,
+        'productos': productos,
+        'categoria_sel': categoria_sel,
+    })
+
+
+def order_summary_view(request, pedido_id):
+    """Vista del resumen de un pedido ya creado."""
+    pedido = api_client.get_pedido(pedido_id)
+    if not pedido:
+        raise Http404('Pedido no encontrado')
+
+    return render(request, 'order_summary.html', {'pedido': pedido})

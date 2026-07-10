@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %}Categorías — TechMarket{% endblock %}
+{% block title %}Marcas — TechMarket{% endblock %}
 
 {% block content %}
 <div class="container py-5">
@@ -8,13 +8,13 @@
   <nav aria-label="breadcrumb" class="mb-4">
     <ol class="breadcrumb">
       <li class="breadcrumb-item"><a href="/">Inicio</a></li>
-      <li class="breadcrumb-item"><a href="/categorias/">Categorías</a></li>
+      <li class="breadcrumb-item"><a href="/categorias/">Marcas</a></li>
       {% if categoria_sel %}<li class="breadcrumb-item active">{{ categoria_sel.nombre }}</li>{% endif %}
     </ol>
   </nav>
 
   <h2 class="section-title mb-4">
-    <i class="bi bi-tags me-2"></i>{% if categoria_sel %}{{ categoria_sel.nombre }}{% else %}Todas las Categorías{% endif %}
+    <i class="bi bi-tags me-2"></i>{% if categoria_sel %}{{ categoria_sel.nombre }}{% else %}Todas las Marcas{% endif %}
   </h2>
 
   <div class="row g-3 mb-5">
@@ -29,18 +29,18 @@
       </a>
     </div>
     {% empty %}
-    <div class="col-12"><div class="alert alert-secondary">No hay categorías registradas.</div></div>
+    <div class="col-12"><div class="alert alert-secondary">No hay marcas registradas.</div></div>
     {% endfor %}
   </div>
 
   {% if categoria_sel %}
   <hr class="my-5">
-  <h4 class="mb-4"><i class="bi bi-grid me-2"></i>Productos en "{{ categoria_sel.nombre }}"</h4>
+  <h4 class="mb-4"><i class="bi bi-grid me-2"></i>Productos de "{{ categoria_sel.nombre }}"</h4>
   <div class="row g-4">
     {% for p in productos %}
     <div class="col-12 col-md-6 col-lg-4">{% include 'components/product_card.html' with producto=p %}</div>
     {% empty %}
-    <div class="col-12"><div class="alert alert-warning"><i class="bi bi-info-circle me-2"></i>No hay productos disponibles en esta categoría.</div></div>
+    <div class="col-12"><div class="alert alert-warning"><i class="bi bi-info-circle me-2"></i>No hay productos disponibles de esta marca.</div></div>
     {% endfor %}
   </div>
   {% endif %}

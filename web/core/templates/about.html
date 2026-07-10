@@ -1,0 +1,51 @@
+# Estos imports van AL INICIO del archivo views.py, junto a los que ya tienes
+from django.contrib import messages  # Sistema de mensajes flash de Django (los banners de éxito/error)
+from django.shortcuts import redirect  # Permite redirigir a otra URL después de procesar algo
+
+
+def about_view(request):
+    """
+    Página institucional "Quiénes Somos".
+    No necesita traer datos de la API, es contenido estático (fijo),
+    por eso simplemente renderiza el template sin pasarle ningún contexto.
+    """
+    return render(request, 'about.html')
+
+
+def contact_view(request):
+    """
+    Muestra la página de contacto con el formulario vacío.
+    Se accede con GET (cuando el usuario simplemente visita /contacto/).
+    """
+    return render(request, 'contact.html')
+
+
+def contact_submit_view(request):
+    """
+    Procesa el envío del formulario de contacto.
+    Se accede con POST (cuando el usuario le da clic a "Enviar mensaje").
+    """
+    # Verifica que la petición sea POST (por seguridad, evita que alguien
+    # entre directo a /contacto/enviar/ sin haber llenado el formulario)
+    if request.method == 'POST':
+        # Extrae el nombre que el usuario escribió en el input "nombre"
+        nombre = request.POST.get('nombre')
+
+        # NOTA IMPORTANTE:
+        # Aquí normalmente se guardaría el mensaje en una base de datos
+        # o se enviaría un correo real. Como la API de Víctor NO tiene
+        # un endpoint de "mensajes de contacto", por ahora solo mostramos
+        # una confirmación visual al usuario (no se guarda en ningún lado).
+        #
+        # Si más adelante Víctor agrega POST /api/mensajes, aquí se
+        # llamaría a api_client.enviar_mensaje(data) en vez de solo esto.
+
+        # messages.success() crea un mensaje flash tipo "success" (verde)
+        # que se muestra automáticamente en base.html gracias al bloque
+        # {% if messages %} que ya tienes ahí
+        messages.success(request, f'¡Gracias {nombre}! Tu mensaje fue enviado correctamente.')
+
+    # redirect() manda al usuario de vuelta a /contacto/
+    # Esto evita el problema de "reenviar formulario" si el usuario
+    # recarga la página después de enviar (patrón POST-Redirect-GET)
+    return redirect('contact')

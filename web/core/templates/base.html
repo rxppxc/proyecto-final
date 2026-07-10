@@ -30,7 +30,8 @@
         <ul class="navbar-nav ms-auto gap-1">
           <li class="nav-item"><a class="nav-link {% if request.path == '/' %}active{% endif %}" href="/"><i class="bi bi-house me-1"></i>Inicio</a></li>
           <li class="nav-item"><a class="nav-link {% if '/productos/' in request.path %}active{% endif %}" href="/productos/"><i class="bi bi-grid me-1"></i>Productos</a></li>
-<li class="nav-item"><a class="nav-link {% if '/categorias/' in request.path %}active{% endif %}" href="/categorias/"><i class="bi bi-tags me-1"></i>Marcas</a></li>          <li class="nav-item"><a class="nav-link {% if '/nosotros/' in request.path %}active{% endif %}" href="/nosotros/"><i class="bi bi-people me-1"></i>Quiénes Somos</a></li>
+         <li class="nav-item"><a class="nav-link {% if '/categorias/' in request.path %}active{% endif %}" href="/categorias/"><i class="bi bi-tags me-1"></i>Marcas</a></li>  
+         <li class="nav-item"><a class="nav-link {% if '/quienes-somos/' in request.path %}active{% endif %}" href="/quienes-somos/"><i class="bi bi-people me-1"></i>Quiénes Somos</a></li>
           <li class="nav-item"><a class="nav-link {% if '/contacto/' in request.path %}active{% endif %}" href="/contacto/"><i class="bi bi-envelope me-1"></i>Contacto</a></li>
          </ul>
 

@@ -1,51 +1,68 @@
-# Estos imports van AL INICIO del archivo views.py, junto a los que ya tienes
-from django.contrib import messages  # Sistema de mensajes flash de Django (los banners de éxito/error)
-from django.shortcuts import redirect  # Permite redirigir a otra URL después de procesar algo
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Quiénes Somos — TechMarket{% endblock %}
+{% block content %}
+<div class="container py-5">
+    <!--  Encabezado principal de la página -->
+  <section class="text-center mb-5">
+    <h1 class="fw-bold section-title d-inline-block">Quiénes Somos</h1>
+    <p class="text-muted mt-3">Conectando tecnología con las personas que la necesitan</p>
+  </section>
 
+   <!-- Sección de historia + tarjeta visual -->
+  <div class="row g-5 align-items-center mb-5">
+    <div class="col-12 col-md-6">
+      <h3 class="fw-bold mb-3"><i class="bi bi-rocket-takeoff text-secondary-custom me-2"></i>Nuestra Historia</h3>
+      <p class="text-muted">
+        TechMarket nació como proyecto de la Universidad de Panamá con un objetivo claro: hacer que
+        encontrar tecnología de calidad sea simple, rápido y confiable. Empezamos con un pequeño
+        catálogo y hoy conectamos compradores con los mejores productos tech del mercado.
+      </p>
+    </div>
 
-def about_view(request):
-    """
-    Página institucional "Quiénes Somos".
-    No necesita traer datos de la API, es contenido estático (fijo),
-    por eso simplemente renderiza el template sin pasarle ningún contexto.
-    """
-    return render(request, 'about.html')
+    <!-- Columna con tarjeta visual -->
+    <div class="col-12 col-md-6">
+      <div class="stat-card text-center p-5">
+        <i class="bi bi-cpu fs-1 text-secondary-custom mb-2"></i>
+        <p class="text-muted mb-0">Tecnología pensada para vos</p>
+      </div>
+    </div>
+  </div>
 
+    <!-- Sección de misión, visión y valores con tarjetas -->
+  <section class="row g-4 mb-5">
+    <!-- Misión -->
+    <div class="col-12 col-md-4">
+      <div class="stat-card text-center h-100">
+        <i class="bi bi-bullseye fs-1 text-secondary-custom mb-3"></i>
+        <h5 class="fw-bold">Misión</h5>
+        <p class="text-muted mb-0">Ofrecer acceso rápido y confiable a productos tecnológicos de calidad, con información clara y precios justos.</p>
+      </div>
+    </div>
+    <!-- Visión -->
+    <div class="col-12 col-md-4">
+      <div class="stat-card text-center h-100">
+        <i class="bi bi-eye fs-1 text-secondary-custom mb-3"></i>
+        <h5 class="fw-bold">Visión</h5>
+        <p class="text-muted mb-0">Ser el marketplace tecnológico de referencia para estudiantes y profesionales en Panamá.</p>
+      </div>
+    </div>
+    <!-- Valores -->
+    <div class="col-12 col-md-4">
+      <div class="stat-card text-center h-100">
+        <i class="bi bi-shield-check fs-1 text-secondary-custom mb-3"></i>
+        <h5 class="fw-bold">Valores</h5>
+        <p class="text-muted mb-0">Transparencia, calidad garantizada y atención centrada en el cliente.</p>
+      </div>
+    </div>
+  </section>
 
-def contact_view(request):
-    """
-    Muestra la página de contacto con el formulario vacío.
-    Se accede con GET (cuando el usuario simplemente visita /contacto/).
-    """
-    return render(request, 'contact.html')
-
-
-def contact_submit_view(request):
-    """
-    Procesa el envío del formulario de contacto.
-    Se accede con POST (cuando el usuario le da clic a "Enviar mensaje").
-    """
-    # Verifica que la petición sea POST (por seguridad, evita que alguien
-    # entre directo a /contacto/enviar/ sin haber llenado el formulario)
-    if request.method == 'POST':
-        # Extrae el nombre que el usuario escribió en el input "nombre"
-        nombre = request.POST.get('nombre')
-
-        # NOTA IMPORTANTE:
-        # Aquí normalmente se guardaría el mensaje en una base de datos
-        # o se enviaría un correo real. Como la API de Víctor NO tiene
-        # un endpoint de "mensajes de contacto", por ahora solo mostramos
-        # una confirmación visual al usuario (no se guarda en ningún lado).
-        #
-        # Si más adelante Víctor agrega POST /api/mensajes, aquí se
-        # llamaría a api_client.enviar_mensaje(data) en vez de solo esto.
-
-        # messages.success() crea un mensaje flash tipo "success" (verde)
-        # que se muestra automáticamente en base.html gracias al bloque
-        # {% if messages %} que ya tienes ahí
-        messages.success(request, f'¡Gracias {nombre}! Tu mensaje fue enviado correctamente.')
-
-    # redirect() manda al usuario de vuelta a /contacto/
-    # Esto evita el problema de "reenviar formulario" si el usuario
-    # recarga la página después de enviar (patrón POST-Redirect-GET)
-    return redirect('contact')
+  <!-- Llamado a la acción -->
+  <section class="text-center">
+    <h4 class="fw-bold mb-3">¿Listo para encontrar tu próximo equipo?</h4>
+    <a href="/productos/" class="btn btn-warning btn-lg fw-bold px-5">
+      <i class="bi bi-grid me-2"></i>Ver Catálogo
+    </a>
+  </section>
+</div>
+{% endblock %}

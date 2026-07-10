@@ -13,10 +13,39 @@ api_client = CatalogApiClient(settings.API_BASE_URL)
 
 
 def home_view(request):
-    """Vista principal del marketplace con productos y categorías."""
+    """
+    Vista principal del marketplace.
+    Muestra productos y categorías, y permite filtrar por búsqueda de texto.
+    """
+    # Trae TODOS los productos desde la API de Víctor
     productos = api_client.get_productos()
+
+    # Trae todas las categorías desde la API
     categorias = api_client.get_categorias()
-    return render(request, 'home.html', {'productos': productos, 'categorias': categorias})
+
+    # Obtiene el texto de búsqueda desde la URL (?q=laptop)
+    # .strip() quita espacios en blanco al inicio/final por si el usuario
+    # escribe " laptop " con espacios de más
+    query = request.GET.get('q', '').strip()
+
+    # Si el usuario escribió algo en el buscador...
+    if query:
+        # Filtra la lista de productos en memoria (no vuelve a llamar la API)
+        # .lower() en ambos lados hace la búsqueda insensible a mayúsculas
+        # (así "Laptop" y "laptop" dan el mismo resultado)
+        productos = [
+            p for p in productos
+            if query.lower() in p.get('nombre', '').lower()      # busca en el nombre
+            or query.lower() in p.get('descripcion', '').lower() # o en la descripción
+        ]
+
+    # Envía productos (ya filtrados o completos), categorías, y el texto
+    # buscado (para mostrarlo de vuelta en el input y en el mensaje de resultados)
+    return render(request, 'home.html', {
+        'productos': productos,
+        'categorias': categorias,
+        'query': query,
+    })
 
 
 def product_detail_view(request, producto_id):

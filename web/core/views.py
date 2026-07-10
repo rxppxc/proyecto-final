@@ -1,8 +1,8 @@
 # web/core/views.py
 from django.conf import settings
+from django.contrib import messages
 from django.http import Http404
-from django.shortcuts import render
-
+from django.shortcuts import render, redirect
 from .infra.api_client import CatalogApiClient
 
 # ──────────────────────────────────────────────────────────────

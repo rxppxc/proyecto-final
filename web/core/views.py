@@ -98,3 +98,29 @@ def order_summary_view(request, pedido_id):
         raise Http404('Pedido no encontrado')
 
     return render(request, 'order_summary.html', {'pedido': pedido})
+def about_view(request):
+    """
+    Página institucional "Quiénes Somos".
+    No necesita traer datos de la API, es contenido estático (fijo),
+    por eso simplemente renderiza el template sin pasarle ningún contexto.
+    """
+    return render(request, 'about.html')
+
+
+def contact_view(request):
+    """
+    Muestra la página de contacto con el formulario vacío.
+    Se accede con GET (cuando el usuario simplemente visita /contacto/).
+    """
+    return render(request, 'contact.html')
+
+
+def contact_submit_view(request):
+    """
+    Procesa el envío del formulario de contacto.
+    Se accede con POST (cuando el usuario le da clic a "Enviar mensaje").
+    """
+    if request.method == 'POST':
+        nombre = request.POST.get('nombre')
+        messages.success(request, f'¡Gracias {nombre}! Tu mensaje fue enviado correctamente.')
+    return redirect('contact')

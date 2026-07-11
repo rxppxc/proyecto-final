@@ -1,0 +1,54 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Marketplace de Tecnología{% endblock %}</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  {% block extra_css %}{% endblock %}
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+  <nav class="navbar navbar-expand-lg navbar-dark navbar-custom sticky-top">
+    <div class="container">
+      <a class="navbar-brand fw-bold" href="/"><i class="bi bi-cpu me-2"></i>TechMarket</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navMenu">
+        <ul class="navbar-nav ms-auto gap-1 align-items-center">
+          <li class="nav-item"><a class="nav-link {% if request.path == '/' %}active{% endif %}" href="/"><i class="bi bi-house me-1"></i>Inicio</a></li>
+          <li class="nav-item"><a class="nav-link {% if '/productos/' in request.path %}active{% endif %}" href="/productos/"><i class="bi bi-grid me-1"></i>Productos</a></li>
+          <li class="nav-item"><a class="nav-link {% if '/categorias/' in request.path %}active{% endif %}" href="/categorias/"><i class="bi bi-tags me-1"></i>Categorías</a></li>
+          <li class="nav-item ms-2">
+            <a class="nav-link position-relative {% if '/carrito/' in request.path or '/checkout/' in request.path %}active{% endif %}" href="/carrito/" aria-label="Carrito">
+              <i class="bi bi-cart3 fs-5"></i>
+              {% if carrito_count > 0 %}
+              <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark" style="font-size:.65rem;">
+                {{ carrito_count }}
+              </span>
+              {% endif %}
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <main class="flex-grow-1">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="footer-custom py-4">
+    <div class="container text-center">
+      <p class="mb-1"><i class="bi bi-cpu me-1"></i><strong>Marketplace de Tecnología</strong></p>
+      <p class="mb-0 text-muted small">©️ 2025 — Universidad de Panamá</p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

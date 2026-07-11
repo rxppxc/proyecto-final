@@ -1,0 +1,226 @@
+{% extends 'base.html' %}
+{% block title %}Carrito — TechMarket{% endblock %}
+
+{% block extra_css %}
+<style>
+  /* ── POS Item Row ── */
+  .pos-item {
+    background: #fff;
+    border-radius: .75rem;
+    border: 1.5px solid #e9ecef;
+    transition: border-color .2s, box-shadow .2s;
+  }
+  .pos-item:hover { border-color: #ffa726; box-shadow: 0 4px 16px rgba(255,167,38,.15); }
+
+  /* ── Qty Controls ── */
+  .btn-qty-circle {
+    width: 2.4rem; height: 2.4rem;
+    border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 1rem; font-weight: bold;
+    border: 2px solid;
+    cursor: pointer;
+    transition: all .15s;
+    background: none;
+  }
+  .btn-qty-minus { border-color: #6c757d; color: #6c757d; }
+  .btn-qty-minus:hover:not(:disabled) { background: #6c757d; color: #fff; }
+  .btn-qty-minus:disabled { opacity: .35; cursor: not-allowed; }
+  .btn-qty-plus  { border-color: #ffa726; color: #ffa726; }
+  .btn-qty-plus:hover  { background: #ffa726; color: #fff; }
+  .btn-qty-del   { border-color: #dc3545; color: #dc3545; }
+  .btn-qty-del:hover   { background: #dc3545; color: #fff; }
+
+  .qty-num { min-width: 2.2rem; text-align: center; font-size: 1.3rem; font-weight: 700; }
+
+  /* ── Summary panel ── */
+  .pos-panel { border-radius: .75rem; overflow: hidden; border: 1.5px solid #e9ecef; }
+  .pos-panel .total-row { background: #1a237e; color: #fff; border-radius: 0 0 .6rem .6rem; }
+
+  /* ── Steps bar ── */
+  .steps { display: flex; align-items: center; justify-content: center; gap: 0; margin-bottom: 2rem; }
+  .step-node { display: flex; flex-direction: column; align-items: center; gap: .3rem; }
+  .step-circle {
+    width: 2.4rem; height: 2.4rem; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: .95rem; border: 2.5px solid;
+  }
+  .step-circle.done  { background: #198754; border-color: #198754; color: #fff; }
+  .step-circle.active{ background: #ffa726; border-color: #ffa726; color: #fff; }
+  .step-circle.idle  { background: #fff;    border-color: #ced4da; color: #adb5bd; }
+  .step-label { font-size: .78rem; font-weight: 600; color: #6c757d; }
+  .step-label.active { color: #ffa726; }
+  .step-line  { flex: 1; height: 2.5px; background: #dee2e6; max-width: 5rem; margin: 0 .3rem; margin-bottom: 1.2rem; }
+  .step-line.done { background: #198754; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4" style="max-width:1100px">
+
+  <!-- Indicador de pasos -->
+  <div class="steps mb-4">
+    <div class="step-node">
+      <div class="step-circle {% if items %}active{% else %}active{% endif %}"><i class="bi bi-cart3"></i></div>
+      <div class="step-label active">Carrito</div>
+    </div>
+    <div class="step-line"></div>
+    <div class="step-node">
+      <div class="step-circle idle">2</div>
+      <div class="step-label">Pago</div>
+    </div>
+    <div class="step-line"></div>
+    <div class="step-node">
+      <div class="step-circle idle">3</div>
+      <div class="step-label">Confirmado</div>
+    </div>
+  </div>
+
+  {% if items %}
+  <div class="row g-4 align-items-start">
+
+    <!-- ── Lista de productos (izquierda) ── -->
+    <div class="col-12 col-lg-7">
+
+      <div class="d-flex align-items-center justify-content-between mb-3">
+        <h5 class="fw-bold mb-0 text-dark">
+          <i class="bi bi-list-check me-2 text-warning"></i>
+          {{ items|length }} producto{{ items|length|pluralize:"s" }} en tu carrito
+        </h5>
+        <form method="post" action="/carrito/vaciar/">
+          {% csrf_token %}
+          <button class="btn btn-outline-danger btn-sm rounded-pill px-3">
+            <i class="bi bi-trash me-1"></i>Vaciar
+          </button>
+        </form>
+      </div>
+
+      <!-- Item card por producto -->
+      {% for item in items %}
+      <div class="pos-item p-3 mb-3 d-flex align-items-center gap-3 flex-wrap">
+
+        <!-- Ícono / imagen -->
+        <div class="text-center flex-shrink-0" style="width:3rem">
+          <i class="bi bi-cpu-fill fs-2 text-warning"></i>
+        </div>
+
+        <!-- Nombre y precio unitario -->
+        <div class="flex-grow-1 min-w-0">
+          <div class="fw-bold text-dark" style="font-size:1.05rem">{{ item.nombre }}</div>
+          <div class="text-muted small">${{ item.precio }} por unidad</div>
+        </div>
+
+        <!-- Controles de cantidad -->
+        <div class="d-flex align-items-center gap-2">
+          <form method="post" action="/carrito/actualizar/" class="d-inline m-0">
+            {% csrf_token %}
+            <input type="hidden" name="clave" value="{{ item.clave }}">
+            <button type="submit" name="cantidad" value="{{ item.cantidad|add:'-1' }}"
+                    class="btn-qty-circle btn-qty-minus" {% if item.cantidad <= 1 %}disabled{% endif %}>
+              <i class="bi bi-dash"></i>
+            </button>
+          </form>
+
+          <span class="qty-num">{{ item.cantidad }}</span>
+
+          <form method="post" action="/carrito/actualizar/" class="d-inline m-0">
+            {% csrf_token %}
+            <input type="hidden" name="clave" value="{{ item.clave }}">
+            <button type="submit" name="cantidad" value="{{ item.cantidad|add:'1' }}"
+                    class="btn-qty-circle btn-qty-plus">
+              <i class="bi bi-plus"></i>
+            </button>
+          </form>
+        </div>
+
+        <!-- Subtotal -->
+        <div class="text-end flex-shrink-0" style="min-width:5rem">
+          <div class="fw-bold fs-5" style="color:#1a237e">${{ item.subtotal }}</div>
+        </div>
+
+        <!-- Eliminar -->
+        <form method="post" action="/carrito/eliminar/" class="m-0">
+          {% csrf_token %}
+          <input type="hidden" name="clave" value="{{ item.clave }}">
+          <button type="submit" class="btn-qty-circle btn-qty-del" title="Eliminar producto">
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </form>
+
+      </div>
+      {% endfor %}
+
+      <a href="/productos/" class="btn btn-outline-secondary rounded-pill mt-1 px-4">
+        <i class="bi bi-arrow-left me-2"></i>Seguir comprando
+      </a>
+    </div>
+
+    <!-- ── Panel de resumen (derecha) ── -->
+    <div class="col-12 col-lg-5">
+      <div class="pos-panel shadow-sm sticky-top" style="top:80px">
+
+        <!-- Header panel -->
+        <div class="bg-dark text-white px-4 py-3 d-flex align-items-center gap-2">
+          <i class="bi bi-receipt fs-5"></i>
+          <span class="fw-bold fs-6">Resumen del pedido</span>
+        </div>
+
+        <!-- Items en panel -->
+        <div class="bg-white">
+          {% for item in items %}
+          <div class="d-flex justify-content-between align-items-center px-4 py-2 border-bottom">
+            <div>
+              <div class="fw-semibold small text-dark text-truncate" style="max-width:160px">{{ item.nombre }}</div>
+              <div class="text-muted" style="font-size:.8rem">{{ item.cantidad }} × ${{ item.precio }}</div>
+            </div>
+            <span class="fw-bold small">${{ item.subtotal }}</span>
+          </div>
+          {% endfor %}
+        </div>
+
+        <!-- Desglose -->
+        <div class="bg-light px-4 py-3">
+          <div class="d-flex justify-content-between text-muted small mb-1">
+            <span>Subtotal</span><span>${{ total }}</span>
+          </div>
+          <div class="d-flex justify-content-between text-muted small">
+            <span>Envío</span>
+            <span class="text-success fw-semibold"><i class="bi bi-truck me-1"></i>Gratis</span>
+          </div>
+        </div>
+
+        <!-- Total -->
+        <div class="total-row d-flex justify-content-between align-items-center px-4 py-3">
+          <span class="fw-bold fs-5">TOTAL</span>
+          <span class="fw-bold fs-3">${{ total }}</span>
+        </div>
+
+        <!-- Botón de pago -->
+        <div class="bg-white p-3">
+          <a href="/checkout/" class="btn btn-warning fw-bold w-100 py-3 fs-5 rounded-3">
+            <i class="bi bi-credit-card me-2"></i>Proceder al pago
+          </a>
+          <p class="text-center text-muted small mt-2 mb-0">
+            <i class="bi bi-shield-check me-1 text-success"></i>Compra segura y protegida
+          </p>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  {% else %}
+  <!-- Carrito vacío -->
+  <div class="text-center py-5 my-3">
+    <i class="bi bi-cart-x" style="font-size:5rem; color:#dee2e6;"></i>
+    <h3 class="fw-bold mt-3 mb-1 text-dark">Tu carrito está vacío</h3>
+    <p class="text-muted mb-4">Explora nuestro catálogo y encuentra el producto perfecto.</p>
+    <a href="/productos/" class="btn btn-warning fw-bold px-5 py-2 rounded-pill fs-5">
+      <i class="bi bi-bag-fill me-2"></i>Explorar productos
+    </a>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}

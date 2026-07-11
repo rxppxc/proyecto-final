@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Categorías — TechMarket{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+
+  <nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="/">Inicio</a></li>
+      <li class="breadcrumb-item"><a href="/categorias/">Categorías</a></li>
+      {% if categoria_sel %}<li class="breadcrumb-item active">{{ categoria_sel.nombre }}</li>{% endif %}
+    </ol>
+  </nav>
+
+  <h2 class="section-title mb-4">
+    <i class="bi bi-tags me-2"></i>{% if categoria_sel %}{{ categoria_sel.nombre }}{% else %}Todas las Categorías{% endif %}
+  </h2>
+
+  <div class="row g-3 mb-5">
+    {% for cat in categorias %}
+    <div class="col-6 col-md-4 col-lg-3">
+      <a href="/categorias/?categoria_id={{ cat.id }}" class="text-decoration-none">
+        <div class="card category-card text-center p-4 h-100 {% if categoria_sel and categoria_sel.id == cat.id %}category-card-active{% endif %}">
+          <i class="bi bi-tag-fill fs-1 text-primary mb-2"></i>
+          <h6 class="fw-bold text-dark mb-1">{{ cat.nombre }}</h6>
+          <small class="text-muted">{{ cat.descripcion|truncatechars:50 }}</small>
+        </div>
+      </a>
+    </div>
+    {% empty %}
+    <div class="col-12"><div class="alert alert-secondary">No hay categorías registradas.</div></div>
+    {% endfor %}
+  </div>
+
+  {% if categoria_sel %}
+  <hr class="my-5">
+  <h4 class="mb-4"><i class="bi bi-grid me-2"></i>Productos en "{{ categoria_sel.nombre }}"</h4>
+  <div class="row g-4">
+    {% for p in productos %}
+    <div class="col-12 col-md-6 col-lg-4">{% include 'components/product_card.html' with producto=p %}</div>
+    {% empty %}
+    <div class="col-12"><div class="alert alert-warning"><i class="bi bi-info-circle me-2"></i>No hay productos disponibles en esta categoría.</div></div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}

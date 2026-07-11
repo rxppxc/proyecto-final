@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}{{ producto.nombre }} — TechMarket{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+
+  <nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="/">Inicio</a></li>
+      <li class="breadcrumb-item"><a href="/productos/">Productos</a></li>
+      <li class="breadcrumb-item active">{{ producto.nombre }}</li>
+    </ol>
+  </nav>
+
+  <div class="row g-5 mb-5 align-items-center">
+    <div class="col-12 col-md-5">
+      <div class="product-detail-img-wrap">
+        <img src="https://placehold.co/500x400/1a237e/ffa726?text={{ producto.nombre|urlencode }}"
+             class="img-fluid rounded-4 shadow" alt="{{ producto.nombre }}">
+      </div>
+    </div>
+
+    <div class="col-12 col-md-7">
+      {% if categoria %}
+      <span class="badge bg-primary mb-3 px-3 py-2"><i class="bi bi-tag-fill me-1"></i>{{ categoria.nombre }}</span>
+      {% endif %}
+
+      <h1 class="fw-bold mb-2">{{ producto.nombre }}</h1>
+      <p class="fs-2 fw-bold text-secondary-custom mb-3">${{ producto.precio }}</p>
+      <p class="text-muted mb-4">{{ producto.descripcion }}</p>
+
+      <div class="mb-4">
+        {% if producto.stock == 0 %}
+          <span class="badge bg-secondary fs-6 px-3 py-2"><i class="bi bi-x-circle me-1"></i>Sin stock</span>
+        {% elif producto.stock < producto.stock_minimo %}
+          <span class="badge badge-stock-bajo fs-6 px-3 py-2"><i class="bi bi-exclamation-triangle me-1"></i>Stock bajo — Quedan {{ producto.stock }} unidades</span>
+        {% else %}
+          <span class="badge bg-success fs-6 px-3 py-2"><i class="bi bi-check-circle me-1"></i>En stock — {{ producto.stock }} disponibles</span>
+        {% endif %}
+      </div>
+
+      {% if producto.stock > 0 %}
+      <form method="post" action="/carrito/agregar/" class="cantidad-form">
+        {% csrf_token %}
+        <input type="hidden" name="producto_id" value="{{ producto.id }}">
+        <div class="d-flex align-items-center gap-3 flex-wrap">
+          <div class="qty-stepper">
+            <button type="button" class="qty-btn" onclick="cambiarCantidad(-1)"><i class="bi bi-dash"></i></button>
+            <input type="number" name="cantidad" id="cantidadInput" min="1" max="{{ producto.stock }}" value="1">
+            <button type="button" class="qty-btn" onclick="cambiarCantidad(1)"><i class="bi bi-plus"></i></button>
+          </div>
+          <button type="submit" class="btn btn-warning fw-bold px-4 btn-add-cart"><i class="bi bi-cart-plus me-2"></i>Agregar al carrito</button>
+        </div>
+      </form>
+      {% else %}
+      <div class="alert alert-secondary"><i class="bi bi-info-circle me-2"></i>Este producto no tiene stock disponible en este momento.</div>
+      {% endif %}
+
+      <a href="/productos/" class="btn btn-outline-secondary mt-4"><i class="bi bi-arrow-left me-1"></i>Volver al catálogo</a>
+    </div>
+  </div>
+
+  {% if relacionados %}
+  <hr class="my-5">
+  <section>
+    <h4 class="section-title mb-4"><i class="bi bi-grid me-2"></i>Productos relacionados</h4>
+    <div class="row g-4">
+      {% for p in relacionados %}
+      <div class="col-12 col-md-6 col-lg-3">{% include 'components/product_card.html' with producto=p %}</div>
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+
+</div>
+
+<script>
+function cambiarCantidad(delta) {
+  const input = document.getElementById('cantidadInput');
+  let val = parseInt(input.value) + delta;
+  const max = parseInt(input.max);
+  if (val < 1) val = 1;
+  if (val > max) val = max;
+  input.value = val;
+}
+</script>
+{% endblock %}

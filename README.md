@@ -1,6 +1,7 @@
 # Web AVG App - Enterprise Architecture
 
 ## Visión general
+
 Este repositorio implementa una solución full-stack con:
 - Backend API en Node.js / TypeScript
 - Frontend Django en Python

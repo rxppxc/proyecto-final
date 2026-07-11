@@ -46,12 +46,19 @@ Sistema de marketplace para emprendimientos tecnológicos donde los usuarios pue
 
 ## Levantar el proyecto
 
+> **Importante:** usar el comando completo para garantizar un arranque limpio (especialmente si ya corrieron otros proyectos con los mismos puertos).
+
 ```bash
-docker-compose up --build
+docker compose down -v && docker compose up --build
 ```
 
-API disponible en: `http://localhost:3000`  
-Frontend disponible en: `http://localhost:8000`
+| Servicio | URL |
+|---|---|
+| Frontend (Django) | http://localhost:8000 |
+| API REST (Node.js) | http://localhost:3000 |
+| Correos (MailHog) | http://localhost:8025 |
+
+El comando `down -v` detiene contenedores previos y limpia los volúmenes antes de reconstruir, evitando conflictos de puertos o datos residuales de otros proyectos.
 
 ---
 
